@@ -129,6 +129,8 @@ public:
     iterator erase(iterator, iterator);
 
     void clear();
+
+    //
     //std::ostream& operator<<
  //----- CONTAINER FINE
 
