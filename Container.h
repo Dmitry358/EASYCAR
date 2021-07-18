@@ -113,7 +113,7 @@ public:
     bool full() const;
 
     T& operator[](unsigned int) const;  //const?? controllo overrange??
-    T& operator[] (iterator) const;
+    T& operator[](iterator) const;
     T& front();
     const T& front() const;
     T& back();
@@ -206,26 +206,45 @@ bool Container<T>::full() const { return _size==_capacity; }
 template<class T>//fare controllo dei range??
 T& Container<T>::operator[](unsigned int i) const { return vector[i]; }
 
-template<class T>//fare controllo dei range??
-T& Container<T>::operator[](iterator i) const {  } //Container::iterator i
+template<class T>//fare controllo dei range?? //Container::iterator it
+T& Container<T>::operator[](iterator it) const { return it.pointer; }
+
+template<class T> //const //emptyexcepytion??
+T& Container<T>::front(){ return *vector; }
 
 template<class T>
-T& Container<T>::front(){}
+const T& Container<T>::front() const { return *vector; }
+
+template<class T>//const
+T& Container<T>::back(){ return *(vector+_size-1); }
 
 template<class T>
-const T& Container<T>::front() const {}
-
-template<class T>
-T& Container<T>::back(){}
-
-template<class T>
-const T& Container<T>::back() const {}
+const T& Container<T>::back() const { return *(vector+_size-1); }
 
 template<class T>//controllare s è vuoto (allora prima istanziare un nuovo array
-void Container<T>::push_back(const T&){}
+void Container<T>::push_back(const T& val){
+    if(!vector){
+        vector= new T[1];
+        *vector=val;
+        ++capacity;
+    }
+
+    else if(full()){ //molta attenzione
+        T* aux=new T[_capacity*2];
+        for(int i=0; i<_size; ++i) *(aux+i)=*(vector+i);
+        *(aux+size)=val;
+        delete[] vector;
+        vector=aux;
+        _capacity*=2;
+    }
+
+    else *(vector+size)=val;
+
+    ++_size;
+}
 
 template<class T>//controllare s è ultimo elemento (allora dopo delete[] array
-void Container<T>::pop_back(){}
+void Container<T>::pop_back(){ --size; /*molta attenzione*/ }
 
 template<class T>
 typename Container<T>::iterator Container<T>::insert(iterator position, const T& val){}
